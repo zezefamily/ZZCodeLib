@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import <CoreMedia/CoreMedia.h>
+
 @interface ViewController ()
 
 @end
@@ -18,9 +19,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    [[ZZNetworkReachabilityManager shareManager]monitorNetworkStatus];
+    
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
     btn.frame = CGRectMake(100, 100, 100, 50);
-    [btn setTitle:@"toCrash" forState:UIControlStateNormal];
+    [btn setTitle:@"task1" forState:UIControlStateNormal];
     [btn addTarget:self action:@selector(getIndex) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
     
@@ -31,7 +34,7 @@
     btn1.layer.masksToBounds = YES;
     btn1.layer.cornerRadius = 12.0f;
     btn1.frame = CGRectMake(100, 100+70, 100, 50);
-    [btn1 setTitle:@"otherThing" forState:UIControlStateNormal];
+    [btn1 setTitle:@"task2" forState:UIControlStateNormal];
     [btn1 addTarget:self action:@selector(otherThing) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn1];
     
@@ -57,18 +60,36 @@
     textLabel.text = @"颜色混合";
     [self.view addSubview:textLabel];
     
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(progressObserver:) name:ZZDownloadProgressNotification object:nil];
+    
+}
+- (void)progressObserver:(NSNotification *)notification
+{
+    ZZDownLoadModel *model = (ZZDownLoadModel *)notification.object;
+    NSLog(@"model.progress == %f speed == %ld",model.progress,model.speed);
 }
 
 - (void)otherThing
 {
-    NSLog(@"我在在工作");
-    self.view.backgroundColor = [UIColor yellowColor];
+//    NSLog(@"我在在工作");
+//    self.view.backgroundColor = [UIColor yellowColor];
+    ZZDownLoadModel *model = [[ZZDownLoadModel alloc]init];
+    model.fileName = @"task2";
+    model.url = @"https://www.apple.com/105/media/cn/iphone-x/2017/01df5b43-28e4-4848-bf20-490c34a926a7/films/feature/iphone-x-feature-cn-20170912_1280x720h.mp4";
+    model.vid = @"4545454545";
+    [[ZZDownLoadManager shareManager]zz_startDownloadTask:model];
 }
 
 - (void)getIndex
 {
-    NSArray *arr = @[@"",@"",@"",@""];
-    NSLog(@"getObject == %@",[arr objectAtIndex:4]);
+//    NSArray *arr = @[@"",@"",@"",@""];
+//    NSLog(@"getObject == %@",[arr objectAtIndex:4]);
+    
+    ZZDownLoadModel *model = [[ZZDownLoadModel alloc]init];
+    model.fileName = @"task1";
+    model.url = @"https://www.apple.com/105/media/cn/ipad-pro/how-to/2017/a0f629be_c30b_4333_942f_13a221fc44f3/films/dock/ipad-pro-dock-cn-20160907_1280x720h.mp4";
+    model.vid = @"23232323";
+    [[ZZDownLoadManager shareManager]zz_startDownloadTask:model];
     
 }
 
